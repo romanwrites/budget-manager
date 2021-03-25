@@ -1,7 +1,6 @@
 package com.romankukin.budgetmanager;
 
-import com.romankukin.budgetmanager.Main.Category;
-import com.romankukin.budgetmanager.Main.Purchase;
+import com.romankukin.budgetmanager.sorting.*;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -26,263 +25,9 @@ import java.util.Scanner;
 // remove ALL category
 // make scanner a field?
 
-interface SortingAlgorithm {
-  public abstract void sort();
-}
-
-class SortAllAlgorithm implements SortingAlgorithm {
-
-  List<Purchase> list;
-
-  SortAllAlgorithm(Map<Category, List<Purchase>> map) {
-    this.list = new ArrayList<>();
-    for (var m : map.entrySet()) {
-      list.addAll(m.getValue());
-    }
-    list.sort(Comparator.reverseOrder());
-  }
-
-  @Override
-  public void sort() {
-    double total = 0;
-
-    System.out.println("All:");
-    for (Purchase purchase : list) {
-      total += purchase.getUnitPrice();
-      System.out.println(purchase);
-    }
-    System.out.println(String.format("Total: $%.2f", total));
-  }
-}
-
-class SortCertainTypeAlgorithm implements SortingAlgorithm {
-
-  private final Map<Category, List<Purchase>> map;
-  private final Scanner scanner;
-
-  public SortCertainTypeAlgorithm(Map<Category, List<Purchase>> map, Scanner scanner) {
-    this.map = map;
-    this.scanner = scanner;
-  }
-
-  private void menuOptions(String read) {
-    switch (Integer.parseInt(read)) {
-      case 1:
-        performSort(Category.FOOD);
-        break;
-      case 2:
-        performSort(Category.CLOTHES);
-        break;
-      case 3:
-        performSort(Category.ENTERTAINMENT);
-        break;
-      case 4:
-        performSort(Category.OTHER);
-        break;
-    }
-    System.out.println();
-  }
-
-  private void performSort(Category category) {
-    List<Purchase> list = map.getOrDefault(category, Collections.emptyList());
-    list.sort(Comparator.reverseOrder());
-
-    if (list.isEmpty()) {
-      System.out.println("The purchase list is empty!");
-      return ;
-    }
-
-    double sum = 0;
-    System.out.println(category + ":");
-    for (Purchase purchase : list) {
-      sum += purchase.getUnitPrice();
-      System.out.println(purchase);
-    }
-    System.out.println(String.format("Total sum: $%.2f", sum));
-    return ;
-  }
-
-  private void printMenu() {
-    System.out.println("Choose the type of purchase" + System.lineSeparator()
-        + "1) Food" + System.lineSeparator()
-        + "2) Clothes" + System.lineSeparator()
-        + "3) Entertainment" + System.lineSeparator()
-        + "4) Other");
-  }
-
-  @Override
-  public void sort() {
-    boolean isRunning = true;
-
-    while (isRunning) {
-      printMenu();
-      String read = scanner.nextLine();
-      if (!read.matches("^[1-4]$")) {
-        System.out.println("Enter only numbers");
-        continue;
-      }
-      System.out.println();
-      menuOptions(read);
-      isRunning = false;
-    }
-  }
-}
-
-class SortByTypeAlgorithm implements SortingAlgorithm {
-  Map<Category, List<Purchase>> map;
-
-  public SortByTypeAlgorithm(
-      Map<Category, List<Purchase>> map) {
-    this.map = map;
-  }
-
-  class TypeOfPurchase implements Comparable<TypeOfPurchase> {
-    String type;
-    double sum;
-
-    public TypeOfPurchase(String type, double sum) {
-      this.type = type;
-      this.sum = sum;
-    }
-
-    public String getType() {
-      return type;
-    }
-
-    public double getSum() {
-      return sum;
-    }
-
-    @Override
-    public String toString() {
-      return String.format("%s - $%.2f", type, sum);
-    }
-
-    @Override
-    public int compareTo(TypeOfPurchase typeOfPurchase) {
-      return Double.compare(sum, typeOfPurchase.sum);
-    }
-  }
-
-  @Override
-  public void sort() {
-    List<TypeOfPurchase> list = new ArrayList<>();
-
-    double totalSum = 0;
-
-    for (Category category : Category.values()) {
-      if (category == Category.ALL) {
-        continue;
-      }
-      List<Purchase> purchases = map.getOrDefault(category, Collections.emptyList());
-      double sum = 0;
-      for (Purchase purchase : purchases) {
-        sum += purchase.getUnitPrice();
-      }
-      totalSum += sum;
-      list.add(new TypeOfPurchase(category.toString(), sum));
-    }
-    list.sort(Comparator.reverseOrder());
-
-    System.out.println("Types:");
-    for (TypeOfPurchase typeOfPurchase : list) {
-      System.out.println(typeOfPurchase);
-    }
-    System.out.println("Total sum: " + totalSum);
-  }
-}
-
-class Sorter {
-  SortingAlgorithm sortingAlgorithm;
-
-  public Sorter(SortingAlgorithm sortingAlgorithm) {
-    this.sortingAlgorithm = sortingAlgorithm;
-  }
-
-  public Sorter() {
-    this.sortingAlgorithm = null;
-  }
-
-  public void performSort() {
-    if (sortingAlgorithm != null) {
-      sortingAlgorithm.sort();
-    }
-  }
-}
-
 public class Main {
 
   private static final String FILENAME = "purchases.txt";
-
-  enum Category {
-    FOOD("Food"),
-    CLOTHES("Clothes"),
-    ENTERTAINMENT("Entertainment"),
-    OTHER("Other"),
-    ALL("All");
-
-    String category;
-
-    Category(String category) {
-      this.category = category;
-    }
-
-    @Override
-    public String toString() {
-      return category;
-    }
-  }
-
-  class Purchase implements Comparable<Purchase> {
-    private String unit;
-    private double unitPrice;
-    private Category category;
-
-    public Purchase(Category category, String unit, double unitPrice) {
-      this.category = category;
-      this.unit = unit;
-      this.unitPrice = unitPrice;
-    }
-
-    public String getUnit() {
-      return unit;
-    }
-
-    public void setUnit(String unit) {
-      this.unit = unit;
-    }
-
-    public double getUnitPrice() {
-      return unitPrice;
-    }
-
-    public void setUnitPrice(double unitPrice) {
-      this.unitPrice = unitPrice;
-    }
-
-    public Category getCategory() {
-      return category;
-    }
-
-    public void setCategory(Category category) {
-      this.category = category;
-    }
-
-    @Override
-    public String toString() {
-      return String.format("%s $%.2f", this.unit, this.unitPrice);
-    }
-
-
-    @Override
-    public int compareTo(Purchase purchase) {
-      int comp = Double.compare(this.unitPrice, purchase.unitPrice);
-      if (comp == 0) {
-        return this.unit.compareTo(purchase.unit);
-      }
-      return comp;
-    }
-  }
 
   private final Map<Category, List<Purchase>> map;
   private double total;
@@ -367,7 +112,7 @@ public class Main {
           showListOfPurchases(Category.ALL);
           break;
         case 6:
-          return ;
+          return;
       }
       System.out.println();
     }
@@ -627,7 +372,7 @@ public class Main {
   }
 
   private void showMainMenu() {
-    try(Scanner scanner = new Scanner(System.in)) {
+    try (Scanner scanner = new Scanner(System.in)) {
       boolean isRunning = true;
       while (isRunning) {
         printMainMenu();
