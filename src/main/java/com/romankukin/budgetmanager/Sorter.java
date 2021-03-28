@@ -1,4 +1,4 @@
-package com.romankukin.budgetmanager.sorting;
+package com.romankukin.budgetmanager;
 
 public class Sorter {
 

@@ -1,6 +1,5 @@
-package com.romankukin.budgetmanager.sorting;
+package com.romankukin.budgetmanager;
 
-import com.romankukin.budgetmanager.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;

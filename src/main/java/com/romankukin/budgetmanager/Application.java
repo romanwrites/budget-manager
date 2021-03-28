@@ -1,7 +1,5 @@
 package com.romankukin.budgetmanager;
 
-import com.romankukin.budgetmanager.sorting.*;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -10,7 +8,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.List;
@@ -25,7 +22,7 @@ import java.util.Scanner;
 // remove ALL category
 // make scanner a field?
 
-public class Main {
+public class Application {
 
   private static final String FILENAME = "purchases.txt";
 
@@ -33,7 +30,7 @@ public class Main {
   private double total;
   private double balance;
 
-  Main() {
+  Application() {
     this.map = new HashMap<>();
     this.total = 0;
     this.balance = 0;
@@ -120,18 +117,6 @@ public class Main {
 
   private void showBalance() {
     System.out.println(String.format("Balance: $%.2f", balance));
-  }
-
-  private void printMainMenu() {
-    System.out.println("Choose your action:" + System.lineSeparator()
-        + "1) Add income" + System.lineSeparator()
-        + "2) Add purchase" + System.lineSeparator()
-        + "3) Show list of purchases" + System.lineSeparator()
-        + "4) Balance" + System.lineSeparator()
-        + "5) Save" + System.lineSeparator()
-        + "6) Load" + System.lineSeparator()
-        + "7) Analyze (Sort)" + System.lineSeparator()
-        + "0) Exit");
   }
 
   private void printListPurchasesMenu() {
@@ -391,8 +376,191 @@ public class Main {
 
   }
 
-  public static void main(String[] args) throws FileNotFoundException {
-    Main main = new Main();
+
+  private void printMainMenu() {
+    System.out.println("Choose your action:" + System.lineSeparator()
+        + "1) Add income" + System.lineSeparator()
+        + "2) Add purchase" + System.lineSeparator()
+        + "3) Show list of purchases" + System.lineSeparator()
+        + "4) Balance" + System.lineSeparator()
+        + "5) Save" + System.lineSeparator()
+        + "6) Load" + System.lineSeparator()
+        + "7) Analyze (Sort)" + System.lineSeparator()
+        + "0) Exit");
+  }
+
+
+}
+
+class ApplicationRunner {
+  public static void main(String[] args) {
+    Application main = new Application();
     main.showMainMenu();
+  }
+}
+
+class PurchaseAdderCommand implements Command {
+
+  ListOfPurchases purchases;
+
+  @Override
+  public void execute() {
+    purchases.add();
+  }
+}
+
+class ListOfPurchases {
+
+  private Scanner scanner;
+  private final Map<Category, List<Purchase>> map;
+  private double total;
+
+  public ListOfPurchases(Scanner scanner) {
+    this.scanner = scanner;
+    this.total = 0;
+    this.map = new HashMap<>();
+  }
+
+  public void add() {
+
+  }
+
+  private void showListOfPurchases(Category category) {
+    if (category == Category.ALL) {
+      System.out.println(category + ":");
+      for (var entry : map.entrySet()) {
+        for (Purchase purchase : entry.getValue()) {
+          System.out.println(purchase);
+        }
+      }
+      System.out.println(String.format("Total: $%.2f", total));
+    } else {
+      List<Purchase> list = map.getOrDefault(category, Collections.emptyList());
+      System.out.println(category + ":");
+      if (list.isEmpty()) {
+        System.out.println("The purchase list is empty!");
+      } else {
+        double categoryTotal = 0;
+        for (Purchase purchase : list) {
+          categoryTotal += purchase.getUnitPrice();
+          System.out.println(purchase);
+        }
+        System.out.println(String.format("Total: $%.2f", categoryTotal));
+      }
+    }
+
+  }
+
+  private void showListPurchasesMenu(Scanner scanner) {
+    if (map.isEmpty()) {
+      System.out.println("The purchase list is empty!");
+      return;
+    }
+
+    while (true) {
+      printListPurchasesMenu();
+      String read = scanner.nextLine();
+      if (!read.matches("^[1-6]$")) {
+        System.out.println("Enter only numbers from 1 to 6");
+        continue;
+      }
+      System.out.println();
+      switch (Integer.parseInt(read)) {
+        case 1:
+          showListOfPurchases(Category.FOOD);
+          break;
+        case 2:
+          showListOfPurchases(Category.CLOTHES);
+          break;
+        case 3:
+          showListOfPurchases(Category.ENTERTAINMENT);
+          break;
+        case 4:
+          showListOfPurchases(Category.OTHER);
+          break;
+        case 5:
+          showListOfPurchases(Category.ALL);
+          break;
+        case 6:
+          return;
+      }
+      System.out.println();
+    }
+  }
+
+  private void printListPurchasesMenu() {
+    System.out.println("Choose the type of purchases" + System.lineSeparator()
+        + "1) Food" + System.lineSeparator()
+        + "2) Clothes" + System.lineSeparator()
+        + "3) Entertainment" + System.lineSeparator()
+        + "4) Other" + System.lineSeparator()
+        + "5) All" + System.lineSeparator()
+        + "6) Back");
+  }
+
+  private void printPurchaseMenu() {
+    System.out.println("Choose the type of purchase" + System.lineSeparator()
+        + "1) Food" + System.lineSeparator()
+        + "2) Clothes" + System.lineSeparator()
+        + "3) Entertainment" + System.lineSeparator()
+        + "4) Other" + System.lineSeparator()
+        + "5) Back");
+  }
+
+
+  private void addPurchase(Category category, Scanner scanner) {
+    System.out.println("Enter purchase name:");
+    String unit = scanner.nextLine();
+    while (true) {
+      System.out.println("Enter its price:");
+      String price = scanner.nextLine();
+      if (!price.matches("^\\d+(\\.\\d+)?$")) {
+        System.out.println("Enter only numbers");
+        continue;
+      }
+      double priceUnit = Double.parseDouble(price);
+      List<Purchase> list;
+      if (map.containsKey(category)) {
+        list = map.get(category);
+        list.add(new Purchase(category, unit, priceUnit));
+      } else {
+        list = new ArrayList<>();
+        list.add(new Purchase(category, unit, priceUnit));
+        map.put(category, list);
+      }
+      total += priceUnit;
+//      balance -= priceUnit;
+      System.out.println("Purchase was added!");
+      break;
+    }
+    System.out.println();
+  }
+
+  private void showPurchaseMenu(Scanner scanner) {
+    while (true) {
+      printPurchaseMenu();
+      String read = scanner.nextLine();
+      if (!read.matches("^[1-5]$")) {
+        System.out.println("Enter only numbers from 1 to 5");
+        continue;
+      }
+      System.out.println();
+      switch (Integer.parseInt(read)) {
+        case 1:
+          addPurchase(Category.FOOD, scanner);
+          break;
+        case 2:
+          addPurchase(Category.CLOTHES, scanner);
+          break;
+        case 3:
+          addPurchase(Category.ENTERTAINMENT, scanner);
+          break;
+        case 4:
+          addPurchase(Category.OTHER, scanner);
+          break;
+        case 5:
+          return;
+      }
+    }
   }
 }
