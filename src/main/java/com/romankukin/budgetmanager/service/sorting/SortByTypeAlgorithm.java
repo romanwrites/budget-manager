@@ -1,4 +1,4 @@
-package com.romankukin.budgetmanager.sorting;
+package com.romankukin.budgetmanager.service.sorting;
 
 import com.romankukin.budgetmanager.*;
 import java.util.ArrayList;

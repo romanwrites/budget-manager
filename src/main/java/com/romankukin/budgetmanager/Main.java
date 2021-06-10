@@ -1,6 +1,6 @@
 package com.romankukin.budgetmanager;
 
-import com.romankukin.budgetmanager.sorting.*;
+import com.romankukin.budgetmanager.service.sorting.*;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -10,7 +10,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.List;
@@ -392,7 +391,6 @@ public class Main {
   }
 
   public static void main(String[] args) throws FileNotFoundException {
-    Main main = new Main();
-    main.showMainMenu();
+    new App().run();
   }
 }
