@@ -1,25 +1,16 @@
 package com.romankukin.budgetmanager.controller.menu;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.romankukin.budgetmanager.controller.BeanContainer;
 import java.util.Scanner;
-import com.romankukin.budgetmanager.controller.Handler;
 
-public abstract class AbstractMenu implements Menu {
-  protected final Map<String, Handler> handlers;
+public abstract class AbstractMenu {
+  protected final BeanContainer beanContainer;
   protected final Scanner scanner;
 
-  public AbstractMenu(Scanner scanner, Handler... handlers) {
+  public AbstractMenu(Scanner scanner, BeanContainer beanContainer) {
     this.scanner = scanner;
-    this.handlers = new HashMap<>();
-    for (Handler handler : handlers) {
-      this.handlers.put(handler.getCommandName(), handler);
-    }
+    this.beanContainer = beanContainer;
   }
 
-  protected void printBadInputMessage() {
-    System.out.println("Bad input, try again");
-  }
-
-  protected abstract void printMenu();
+  abstract void mapOptionsToCommands();
 }

@@ -1,14 +1,17 @@
 package com.romankukin.budgetmanager.dao;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import com.romankukin.budgetmanager.model.Person;
 
-public class PersonDao {
+public class BudgetDao {
 
   private final List<Person> people;
+  private BigDecimal balance;
+  private BigDecimal total;
 
-  public PersonDao() {
+  public BudgetDao() {
     this.people = new ArrayList<>();
   }
 
@@ -26,5 +29,13 @@ public class PersonDao {
 
   public void removeAllPeople() {
     people.clear();
+  }
+
+  public BigDecimal getBalance() {
+    return balance;
+  }
+
+  public BigDecimal getTotal() {
+    return total;
   }
 }

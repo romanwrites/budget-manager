@@ -3,21 +3,21 @@ package com.romankukin.budgetmanager.controller.commands;
 import java.util.Scanner;
 import com.romankukin.budgetmanager.controller.BaseHandler;
 import com.romankukin.budgetmanager.controller.Handler;
-import com.romankukin.budgetmanager.service.impl.PersonService;
+import com.romankukin.budgetmanager.service.impl.BudgetService;
 
-public class ShowAllHandler extends BaseHandler {
+public class ShowBalanceCommand extends BaseHandler {
 
-  private final static String COMMAND_NAME = "showAll";
-  private final PersonService service;
+  private final static String COMMAND_NAME = "showBalance";
+  private final BudgetService service;
 
-  public ShowAllHandler(Scanner scanner, PersonService service, Handler next) {
+  public ShowBalanceCommand(Scanner scanner, BudgetService service, Handler next) {
     super(scanner, next);
     this.service = service;
   }
 
   @Override
   public void handle() {
-    service.showAll();
+    service.showBalance();
   }
 
   @Override

@@ -3,14 +3,14 @@ package com.romankukin.budgetmanager.controller.commands;
 import java.util.Scanner;
 import com.romankukin.budgetmanager.controller.BaseHandler;
 import com.romankukin.budgetmanager.controller.Handler;
-import com.romankukin.budgetmanager.service.impl.PersonService;
+import com.romankukin.budgetmanager.service.impl.BudgetService;
 
-public class AddCommand extends BaseHandler {
+public class AddIncomeCommand extends BaseHandler {
 
   private final static String COMMAND_NAME = "add";
-  private final PersonService service;
+  private final BudgetService service;
 
-  public AddCommand(Scanner scanner, PersonService service, Handler next) {
+  public AddIncomeCommand(Scanner scanner, BudgetService service, Handler next) {
     super(scanner, next);
     this.service = service;
   }

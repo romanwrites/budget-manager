@@ -121,17 +121,7 @@ public class Main {
     System.out.println(String.format("Balance: $%.2f", balance));
   }
 
-  private void printMainMenu() {
-    System.out.println("Choose your action:" + System.lineSeparator()
-        + "1) Add income" + System.lineSeparator()
-        + "2) Add purchase" + System.lineSeparator()
-        + "3) Show list of purchases" + System.lineSeparator()
-        + "4) Balance" + System.lineSeparator()
-        + "5) Save" + System.lineSeparator()
-        + "6) Load" + System.lineSeparator()
-        + "7) Analyze (Sort)" + System.lineSeparator()
-        + "0) Exit");
-  }
+
 
   private void printListPurchasesMenu() {
     System.out.println("Choose the type of purchases" + System.lineSeparator()

@@ -1,28 +1,32 @@
 package com.romankukin.budgetmanager.config;
 
+import com.romankukin.budgetmanager.controller.BeanContainer;
 import java.util.Scanner;
 import com.romankukin.budgetmanager.controller.Handler;
-import com.romankukin.budgetmanager.controller.commands.AddCommand;
-import com.romankukin.budgetmanager.controller.commands.ShowAllHandler;
+import com.romankukin.budgetmanager.controller.commands.AddIncomeCommand;
+import com.romankukin.budgetmanager.controller.commands.ShowBalanceCommand;
 import com.romankukin.budgetmanager.controller.menu.impl.MainMenu;
-import com.romankukin.budgetmanager.dao.PersonDao;
-import com.romankukin.budgetmanager.service.impl.PersonService;
+import com.romankukin.budgetmanager.dao.BudgetDao;
+import com.romankukin.budgetmanager.service.impl.BudgetService;
 
 public class Configurator {
 
   public static MainMenu configure(Scanner scanner) {
     // init dao
-    PersonDao personDao = new PersonDao();
+    BudgetDao budgetDao = new BudgetDao();
 
     // init services
-    PersonService personService = new PersonService(personDao);
+    BudgetService budgetService = new BudgetService(scanner, budgetDao);
 
     // create commands
-    Handler add = new AddCommand(scanner, personService, null);
-    Handler showAll = new ShowAllHandler(scanner, personService, null);
+    Handler addIncome = new AddIncomeCommand(scanner, budgetService, null);
+    Handler showBalance = new ShowBalanceCommand(scanner, budgetService, null);
+
+    // create bean container
+    BeanContainer beanContainer = new BeanContainer(addIncome, showBalance);
 
     // create menus
-    MainMenu mainMenu = new MainMenu(scanner, add, showAll);
+    MainMenu mainMenu = new MainMenu(scanner, beanContainer);
 
     return mainMenu;
   }
