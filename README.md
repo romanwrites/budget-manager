@@ -1,6 +1,6 @@
 # budget-manager
-Face the truth refactoring will never happen
-So I archive project
+Face the truth refactoring will never happen. 
+So I archive the project
 
 ## About
 JetBrains academy learning [project](https://hyperskill.org/projects/76?track=1)
